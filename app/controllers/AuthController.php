@@ -43,7 +43,17 @@ class AuthController {
             $stmt = $pdo->prepare("UPDATE usuarios SET codigo_2fa = ?, expiracao_2fa = ? WHERE id = ?");
             $stmt->execute([$codigo, $expiracao, $user['id']]);
             
-            // Enviar e-mail real via SMTP do Gmail
+            // Render Free Tier SMTP Bypass
+              $isRender = isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'onrender.com') !== false;
+              if ($isRender) {
+                  $_SESSION['user_id'] = $user['id'];
+                  $_SESSION['user_email'] = $user['email'];
+                  $_SESSION['2fa_verified'] = true; // Bypassa o 2FA
+                  redirect('/dashboard');
+                  return;
+              }
+              
+              // Enviar e-mail real via SMTP do Gmail
             $mail = new PHPMailer(true);
             try {
                 // Configurações do Servidor

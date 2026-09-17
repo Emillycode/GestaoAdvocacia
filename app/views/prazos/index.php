@@ -46,7 +46,11 @@
                         }
                     ?>
                     <tr class="<?= $classeLinha ?>">
+<<<<<<< HEAD
                         <td><strong><?= !empty($prazo['numero_processo']) ? '#' . htmlspecialchars($prazo['numero_processo']) : '<span class="text-muted fst-italic">Processo removido</span>' ?></strong></td>
+=======
+                        <td><strong>#<?= htmlspecialchars($prazo['numero_processo']) ?></strong></td>
+>>>>>>> bd18950110dbebd2dc03d6cf49fac0958c0e65ec
                         <td><?= htmlspecialchars($prazo['titulo']) ?></td>
                         <td><?= htmlspecialchars($prazo['tipo']) ?></td>
                         <td><?= $vencimento->format('d/m/Y') ?></td>

@@ -55,7 +55,7 @@
                             <?php if($prazo['concluido'] == 0): ?>
                                 <a href="<?= BASE_URL ?>/prazos/concluir/<?= $prazo['id'] ?>" class="btn btn-sm btn-success" title="Concluir" onclick="return confirm('Marcar como concluído?');"><i class="bi bi-check2"></i></a>
                             <?php endif; ?>
-                            <a href="<?= BASE_URL ?>/prazos/editar/<?= $prazo['id'] ?>" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
+                            <a href="<?= BASE_URL ?>/prazos/editar/<?= $prazo['id'] ?>" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i> Editar</a>
                             <a href="<?= BASE_URL ?>/prazos/excluir/<?= $prazo['id'] ?>" class="btn btn-sm btn-outline-danger" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este prazo?');"><i class="bi bi-trash"></i></a>
                         </td>
                     </tr>

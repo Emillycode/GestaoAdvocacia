@@ -40,7 +40,7 @@ class ProcessoController {
             redirect('/processos');
         } catch (PDOException $e) {
             if (strpos($e->getMessage(), 'UNIQUE constraint failed') !== false) {
-                $_SESSION['flash_err'] = "Erro: J&aacute; existe um processo com este n&uacute;mero!";
+                $_SESSION['flash_err'] = "Erro: Já existe um processo com este número!";
             } else {
                 $_SESSION['flash_err'] = "Erro ao cadastrar processo: " . $e->getMessage();
             }
@@ -55,7 +55,7 @@ class ProcessoController {
         $processo = $stmt->fetch();
         
         if (!$processo) {
-            $_SESSION['flash_err'] = "Processo n&atilde;o encontrado.";
+            $_SESSION['flash_err'] = "Processo não encontrado.";
             redirect('/processos');
         }
         
@@ -110,7 +110,7 @@ class ProcessoController {
         $pdo = getDB();
         $stmt = $pdo->prepare("DELETE FROM processos WHERE id = ? AND usuario_id = ?");
         $stmt->execute([$id, $_SESSION["user_id"]]);
-        $_SESSION['flash_msg'] = "Processo exclu&iacute;do com sucesso!";
+        $_SESSION['flash_msg'] = "Processo excluido com sucesso!";
         redirect('/processos');
     }
 }

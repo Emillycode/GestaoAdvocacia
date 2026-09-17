@@ -31,8 +31,10 @@
                         <td><?= htmlspecialchars($cliente['email']) ?></td>
                         <td><?= htmlspecialchars($cliente['cpf_cnpj']) ?></td>
                         <td>
-                            <a href="<?= BASE_URL ?>/clientes/editar/<?= $cliente['id'] ?>" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
+                            <div class="d-flex gap-2">
+                                <a href="<?= BASE_URL ?>/clientes/editar/<?= $cliente['id'] ?>" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
                             <a href="<?= BASE_URL ?>/clientes/excluir/<?= $cliente['id'] ?>" class="btn btn-sm btn-outline-danger" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este cliente?');"><i class="bi bi-trash"></i></a>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; ?>

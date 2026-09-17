@@ -29,7 +29,9 @@
                         <td><?= htmlspecialchars($doc['cliente_nome']) ?></td>
                         <td><?= $doc['numero_processo'] ? '#' . htmlspecialchars($doc['numero_processo']) : '<span class="text-muted">N/A</span>' ?></td>
                         <td>
-                            <a href="<?= BASE_URL ?>/<?= $doc['caminho_arquivo'] ?>" target="_blank" class="btn btn-sm btn-outline-info"><i class="bi bi-eye"></i> Visualizar</a>
+                            <div class="d-flex gap-2">
+                                <a href="<?= BASE_URL ?>/<?= $doc['caminho_arquivo'] ?>" target="_blank" class="btn btn-sm btn-outline-info"><i class="bi bi-eye"></i> Visualizar</a>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; ?>

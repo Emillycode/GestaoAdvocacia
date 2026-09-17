@@ -26,11 +26,7 @@
                             <?= htmlspecialchars($doc['nome_arquivo']) ?>
                         </td>
                         <td><span class="badge bg-secondary"><?= htmlspecialchars($doc['tipo_documento']) ?></span></td>
-<<<<<<< HEAD
                         <td><?= !empty($doc['cliente_nome']) ? htmlspecialchars($doc['cliente_nome']) : '<span class="text-muted fst-italic">Cliente removido</span>' ?></td>
-=======
-                        <td><?= htmlspecialchars($doc['cliente_nome']) ?></td>
->>>>>>> bd18950110dbebd2dc03d6cf49fac0958c0e65ec
                         <td><?= $doc['numero_processo'] ? '#' . htmlspecialchars($doc['numero_processo']) : '<span class="text-muted">N/A</span>' ?></td>
                         <td>
                             <div class="d-flex gap-2">

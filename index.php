@@ -8,11 +8,7 @@ $isRender = isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'onren
 $basePath = $isRender ? '' : '/Gestaoadvocacia';
 $path = parse_url($request, PHP_URL_PATH);
 
-<<<<<<< HEAD
-if (stripos($path, $basePath) === 0) {
-=======
-if (strpos($path, $basePath) === 0) {
->>>>>>> bd18950110dbebd2dc03d6cf49fac0958c0e65ec
+if (!empty($basePath) && stripos($path, $basePath) === 0) {
     $path = substr($path, strlen($basePath));
 }
 if ($path == '') $path = '/';

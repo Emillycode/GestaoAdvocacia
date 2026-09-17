@@ -104,6 +104,15 @@ class AuthController {
         $user = $stmt->fetch();
         
         if ($user) {
+        // Render Free Tier SMTP Bypass
+        $isRender = isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'onrender.com') !== false;
+        if ($isRender) {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_email'] = $user['email'];
+            $_SESSION['2fa_verified'] = true; // Bypassa o 2FA
+            redirect('/dashboard');
+            return;
+        }
             // Sucesso!
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['email'] = $user['email'];

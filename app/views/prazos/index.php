@@ -1,20 +1,22 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Agenda de Prazos e Audiências</h2>
-    <a href="<?= BASE_URL ?>/prazos/novo" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Novo Prazo</a>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h2 class="mb-0 fw-bold">Agenda de Prazos e Audiências</h2>
+    <a href="<?= BASE_URL ?>/prazos/novo" class="btn btn-primary d-inline-flex align-items-center gap-1 shadow-sm">
+        <i class="bi bi-calendar-plus"></i> Novo Prazo
+    </a>
 </div>
 
 <div class="card shadow-sm border-0">
-    <div class="card-body">
+    <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead>
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
                     <tr>
-                        <th>Processo</th>
+                        <th class="ps-3">Processo</th>
                         <th>Título</th>
                         <th>Tipo</th>
                         <th>Vencimento</th>
                         <th>Status</th>
-                        <th>Ações</th>
+                        <th class="text-end pe-3">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,7 +30,7 @@
                         $alerta = '';
                         
                         if ($prazo['concluido'] == 1) {
-                            $classeLinha = 'table-success text-muted';
+                            $classeLinha = 'table-light text-muted';
                             $alerta = '<span class="badge bg-success">Concluído</span>';
                         } else {
                             if ($vencimento < $hoje) {
@@ -41,25 +43,36 @@
                                 $classeLinha = 'table-warning';
                                 $alerta = '<span class="badge bg-warning text-dark"><i class="bi bi-exclamation-circle"></i> ' . $diff->days . ' dias</span>';
                             } else {
-                                $alerta = '<span class="badge bg-info">No prazo</span>';
+                                $alerta = '<span class="badge bg-info text-dark">No prazo</span>';
                             }
                         }
                     ?>
                     <tr class="<?= $classeLinha ?>">
-                        <td><strong>#<?= htmlspecialchars($prazo['numero_processo']) ?></strong></td>
+                        <td class="ps-3"><strong>#<?= htmlspecialchars($prazo['numero_processo']) ?></strong></td>
                         <td><?= htmlspecialchars($prazo['titulo']) ?></td>
-                        <td><?= htmlspecialchars($prazo['tipo']) ?></td>
+                        <td><span class="badge bg-light text-dark border"><?= htmlspecialchars($prazo['tipo']) ?></span></td>
                         <td><?= $vencimento->format('d/m/Y') ?></td>
                         <td><?= $alerta ?></td>
-                        <td>
-                            <?php if($prazo['concluido'] == 0): ?>
-                                <a href="<?= BASE_URL ?>/prazos/concluir/<?= $prazo['id'] ?>" class="btn btn-sm btn-success" title="Concluir" onclick="return confirm('Marcar como concluído?');"><i class="bi bi-check2"></i></a>
-                            <?php endif; ?>
-                            <a href="<?= BASE_URL ?>/prazos/editar/<?= $prazo['id'] ?>" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i> Editar</a>
-                            <a href="<?= BASE_URL ?>/prazos/excluir/<?= $prazo['id'] ?>" class="btn btn-sm btn-outline-danger" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este prazo?');"><i class="bi bi-trash"></i></a>
+                        <td class="text-end pe-3">
+                            <div class="d-inline-flex gap-2">
+                                <?php if($prazo['concluido'] == 0): ?>
+                                    <a href="<?= BASE_URL ?>/prazos/concluir/<?= $prazo['id'] ?>" class="btn btn-sm btn-success" title="Concluir" onclick="return confirm('Marcar como concluído?');">
+                                        <i class="bi bi-check2"></i>
+                                    </a>
+                                <?php endif; ?>
+                                <a href="<?= BASE_URL ?>/prazos/editar/<?= $prazo['id'] ?>" class="btn btn-sm btn-outline-primary" title="Editar">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </a>
+                                <a href="<?= BASE_URL ?>/prazos/excluir/<?= $prazo['id'] ?>" class="btn btn-sm btn-outline-danger" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este prazo?');">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; ?>
+                    <?php if(empty($prazos)): ?>
+                        <tr><td colspan="6" class="text-center text-muted py-4">Nenhum prazo cadastrado na agenda.</td></tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>

@@ -1,31 +1,54 @@
-# Gestão Advogados
+# Gestão Advocacia
 
-Um sistema de gestão de escritórios de advocacia leve e prático, construído em **PHP** com **SQLite** (Arquitetura MVC). O sistema funciona de forma isolada (Multi-Tenant), permitindo que cada advogado tenha sua própria carteira de clientes, processos, agenda e financeiro, com base no e-mail de acesso.
+Um sistema prático e eficiente de gestão para escritórios de advocacia, construído em **PHP** com banco de dados **SQLite** e arquitetura **MVC**.
 
-## Funcionalidades
-- **Gestão de Clientes:** Cadastro completo com nome, e-mail, telefone, CPF/CNPJ.
-- **Gestão de Processos:** Controle de status, tribunal, vara, e parte contrária. Permite notificar clientes automaticamente via WhatsApp sobre andamentos processuais.
-- **Agenda (Prazos):** Controle de audiências, prazos e reuniões.
-- **Financeiro:** Fluxo de caixa com controle de receitas e despesas por advogado.
-- **Documentos:** Armazenamento seguro de arquivos atrelados a cada processo/cliente.
-- **Multi-Tenant:** Isolamento completo de dados. Cada conta criada possui seu próprio banco de informações.
-- **Autenticação Segura (2FA):** Sistema de login com validação em duas etapas enviando um código para o e-mail via SMTP do Gmail.
+O projeto funciona de forma isolada (Multi-Tenant), permitindo que cada advogado gerencie sua própria carteira de clientes, processos, agenda e setor financeiro, tudo com base no seu e-mail de acesso.
 
-## Como Instalar
+---
 
-1. Clone o repositório no seu servidor ou ambiente local (ex: WAMP, XAMPP):
-   ``bash
+## 📱 Responsividade & Experiência Mobile (App-Like)
+O sistema foi desenvolvido com abordagem mobile-first, proporcionando uso fluido em celulares, tablets e computadores:
+- **Menu Lateral Offcanvas (Gaveta):** Acesso rápido e intuitivo a todos os módulos através do botão hambúrguer (☰).
+- **Barra de Navegação Inferior Fixa:** Atalhos na parte inferior da tela do celular (Início, Clientes, Processos, Prazos e Mais), semelhante a um aplicativo nativo.
+- **Tabelas Touch-Friendly:** Rolagem horizontal suave em telas menores, mantendo os botões de ação organizados e acessíveis.
+- **Login e 2FA Mobile:** Layout adaptável para teclados virtuais de smartphones (Android e iOS) sem cortes de tela.
+- **Formulários Responsivos:** Alinhamento automático dos campos e botões para facilitar o preenchimento com uma única mão.
+
+---
+
+## 🚀 Principais Funcionalidades
+- **Gestão de Clientes:** Cadastro e acompanhamento de clientes (Nome, E-mail, Telefone/WhatsApp, CPF/CNPJ).
+- **Gestão de Processos:** Controle de andamentos, tribunais, varas e notificações automáticas via WhatsApp.
+- **Prazos e Agenda:** Acompanhamento de datas importantes, audiências e reuniões com alerta de proximidade.
+- **Módulo Financeiro:** Controle de fluxo de caixa, honorários advocatícios e custas/indenizações de clientes.
+- **Gestão de Documentos:** Armazenamento seguro de arquivos para clientes e processos.
+- **Autenticação Segura (2FA):** Proteção extra no login via código enviado por e-mail (SMTP).
+- **Multi-Tenant:** Isolamento total de dados para cada conta cadastrada.
+
+---
+
+## 💻 Como Executar o Projeto
+
+1. Clone o repositório em seu servidor web (ex: WAMP, XAMPP, Laragon):
+   ```bash
    git clone https://github.com/seu-usuario/gestao-advogados.git
-   ``
-2. O sistema não requer configuração de MySQL. Ele utiliza um banco de dados **SQLite** \database.sqlite\ localizado na pasta \db/\. O banco será criado automaticamente (se houver o arquivo \setup.php\) ou você pode utilizar a versão já inclusa.
-3. Acesse a pasta do projeto e abra o arquivo \config.php\. Verifique a constante \BASE_URL\ para garantir que aponta para o diretório correto:
-   ``php
-   define('BASE_URL', 'http://localhost/Gestaoadvocacia');
-   ``
-4. **Configuração de E-mail (Opcional):** Para que o sistema de login 2FA envie e-mails corretamente, configure as credenciais SMTP no arquivo \pp/controllers/AuthController.php\ com seu e-mail e senha de aplicativo (App Password).
+   ```
 
-## Tecnologias Utilizadas
-- **Backend:** PHP 8 (Orientado a Objetos / MVC)
-- **Banco de Dados:** SQLite
+2. Configure o caminho base do projeto no arquivo `config.php`:
+   ```php
+   define('BASE_URL', 'http://localhost/Gestaoadvocacia'); // Altere se necessário
+   ```
+
+3. **Banco de Dados:** O sistema utiliza **SQLite**. Nenhuma configuração extra de SGBD é necessária. O arquivo `database.sqlite` é gerado/lido automaticamente na pasta `db/`.
+
+4. **Configuração de E-mail:** Para ativar o envio de código 2FA, configure as credenciais SMTP no arquivo `app/controllers/AuthController.php`.
+
+5. Acesse no navegador: `http://localhost/Gestaoadvocacia`
+
+---
+
+## 🛠 Tecnologias
+- **Backend:** PHP 8 (MVC / Orientação a Objetos)
+- **Banco de Dados:** SQLite (via PDO)
 - **Frontend:** HTML5, CSS3, Bootstrap 5 e Bootstrap Icons
-- **Envio de E-mails:** PHPMailer
+- **Dependências de Terceiros:** PHPMailer

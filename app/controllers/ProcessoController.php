@@ -5,7 +5,7 @@ class ProcessoController {
         $stmt = $pdo->prepare("
             SELECT p.*, c.nome as cliente_nome 
             FROM processos p 
-            JOIN clientes c ON p.cliente_id = c.id 
+            LEFT JOIN clientes c ON p.cliente_id = c.id
             WHERE p.usuario_id = ?
             ORDER BY p.id DESC
         "); $stmt->execute([$_SESSION["user_id"]]); $processos = $stmt->fetchAll();
@@ -78,7 +78,7 @@ class ProcessoController {
         
         $pdo = getDB();
         
-        $stmt = $pdo->prepare("SELECT p.andamento_resumido, c.telefone, c.nome, p.numero_processo FROM processos p JOIN clientes c ON p.cliente_id = c.id WHERE p.id = ? AND p.usuario_id = ?");
+        $stmt = $pdo->prepare("SELECT p.andamento_resumido, c.telefone, c.nome, p.numero_processo FROM processos p LEFT JOIN clientes c ON p.cliente_id = c.id WHERE p.id = ? AND p.usuario_id = ?");
         $stmt->execute([$id, $_SESSION["user_id"]]);
         $dadosAntigos = $stmt->fetch();
         
@@ -86,12 +86,12 @@ class ProcessoController {
             $stmt = $pdo->prepare("UPDATE processos SET cliente_id = ?, numero_processo = ?, parte_contraria = ?, tribunal = ?, vara = ?, status = ?, andamento_resumido = ? WHERE id = ? AND usuario_id = ?");
             $stmt->execute([$cliente_id, $numero_processo, $parte_contraria, $tribunal, $vara, $status, $andamento, $id, $_SESSION["user_id"]]);
             
-            if ($dadosAntigos && trim($andamento) !== '' && $dadosAntigos['andamento_resumido'] !== $andamento) {
+            if ($dadosAntigos && !empty($dadosAntigos['telefone']) && trim($andamento) !== '' && $dadosAntigos['andamento_resumido'] !== $andamento) {
                 $telefone = preg_replace('/[^0-9]/', '', $dadosAntigos['telefone']);
-                $nome = $dadosAntigos['nome'];
+                $nome = $dadosAntigos['nome'] ?? 'Cliente';
                 $numeroProcesso = $dadosAntigos['numero_processo'];
                 
-                $texto = "Ol&aacute;, $nome! H&aacute; um novo andamento no seu processo (N $numeroProcesso):\n\n*$andamento*";
+                $texto = "Olá, $nome! Tem um novo andamento no seu processo (N $numeroProcesso):\n\n*$andamento*";
                 $url = "https://wa.me/{$telefone}?text=" . urlencode($texto);
                 
                 $_SESSION['whatsapp_url'] = $url;
@@ -108,9 +108,15 @@ class ProcessoController {
     
     public function delete($id) {
         $pdo = getDB();
+        // Excluir prazos e documentos vinculados a este processo
+        $stmt_prz = $pdo->prepare("DELETE FROM prazos WHERE processo_id = ? AND usuario_id = ?");
+        $stmt_prz->execute([$id, $_SESSION["user_id"]]);
+        $stmt_doc = $pdo->prepare("DELETE FROM documentos WHERE processo_id = ? AND usuario_id = ?");
+        $stmt_doc->execute([$id, $_SESSION["user_id"]]);
+        
         $stmt = $pdo->prepare("DELETE FROM processos WHERE id = ? AND usuario_id = ?");
         $stmt->execute([$id, $_SESSION["user_id"]]);
-        $_SESSION['flash_msg'] = "Processo excluido com sucesso!";
+        $_SESSION['flash_msg'] = "Processo e registros vinculados excluídos com sucesso!";
         redirect('/processos');
     }
 }

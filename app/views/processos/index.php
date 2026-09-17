@@ -23,7 +23,7 @@
                     <?php foreach($processos as $processo): ?>
                     <tr>
                         <td class="ps-3"><strong><?= htmlspecialchars($processo['numero_processo']) ?></strong></td>
-                        <td><?= htmlspecialchars($processo['cliente_nome']) ?></td>
+                        <td><?= !empty($processo['cliente_nome']) ? htmlspecialchars($processo['cliente_nome']) : '<span class="text-muted fst-italic">Cliente removido / não vinculado</span>' ?></td>
                         <td><?= htmlspecialchars($processo['tribunal']) ?> / <?= htmlspecialchars($processo['vara']) ?></td>
                         <td><?= htmlspecialchars($processo['parte_contraria']) ?></td>
                         <td>

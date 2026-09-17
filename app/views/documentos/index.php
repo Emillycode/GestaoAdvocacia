@@ -30,7 +30,7 @@
                             </div>
                         </td>
                         <td><span class="badge bg-secondary-subtle text-secondary-emphasis border"><?= htmlspecialchars($doc['tipo_documento']) ?></span></td>
-                        <td><?= htmlspecialchars($doc['cliente_nome']) ?></td>
+                        <td><?= !empty($doc['cliente_nome']) ? htmlspecialchars($doc['cliente_nome']) : '<span class="text-muted fst-italic">Cliente removido</span>' ?></td>
                         <td><?= $doc['numero_processo'] ? '#' . htmlspecialchars($doc['numero_processo']) : '<span class="text-muted">N/A</span>' ?></td>
                         <td class="text-end pe-3">
                             <a href="<?= BASE_URL ?>/<?= $doc['caminho_arquivo'] ?>" target="_blank" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1">

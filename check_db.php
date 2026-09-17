@@ -1,5 +1,5 @@
 <?php
-$pdo = new PDO('sqlite:D:\Wampp\www\escritorio-advocacia\db\database.sqlite');
+$pdo = new PDO('sqlite:' . __DIR__ . '/db/database.sqlite');
 $tables = $pdo->query("SELECT name FROM sqlite_master WHERE type='table'")->fetchAll();
 foreach($tables as $table) {
     echo "Table: " . $table['name'] . "\n";

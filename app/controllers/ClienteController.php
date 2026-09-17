@@ -58,11 +58,29 @@ class ClienteController {
     public function delete($id) {
         $pdo = getDB();
         try {
+            // Excluir prazos vinculados aos processos deste cliente
+            $stmt = $pdo->prepare("DELETE FROM prazos WHERE usuario_id = ? AND processo_id IN (SELECT id FROM processos WHERE cliente_id = ? AND usuario_id = ?)");
+            $stmt->execute([$_SESSION["user_id"], $id, $_SESSION["user_id"]]);
+            
+            // Excluir documentos deste cliente
+            $stmt = $pdo->prepare("DELETE FROM documentos WHERE cliente_id = ? AND usuario_id = ?");
+            $stmt->execute([$id, $_SESSION["user_id"]]);
+            
+            // Excluir financeiro deste cliente
+            $stmt = $pdo->prepare("DELETE FROM financeiro WHERE cliente_id = ? AND usuario_id = ?");
+            $stmt->execute([$id, $_SESSION["user_id"]]);
+            
+            // Excluir processos deste cliente
+            $stmt = $pdo->prepare("DELETE FROM processos WHERE cliente_id = ? AND usuario_id = ?");
+            $stmt->execute([$id, $_SESSION["user_id"]]);
+            
+            // Excluir o próprio cliente
             $stmt = $pdo->prepare("DELETE FROM clientes WHERE id = ? AND usuario_id = ?");
             $stmt->execute([$id, $_SESSION["user_id"]]);
-            $_SESSION['flash_msg'] = "Cliente removido com sucesso!";
+            
+            $_SESSION['flash_msg'] = "Cliente e todos os seus registros vinculados foram removidos com sucesso!";
         } catch (PDOException $e) {
-            $_SESSION['flash_err'] = "Erro: Não é possível remover este cliente pois há processos, prazos ou documentos vinculados a ele.";
+            $_SESSION['flash_err'] = "Erro ao remover cliente: " . $e->getMessage();
         }
         redirect('/clientes');
     }

@@ -5,7 +5,7 @@ class PrazoController {
         $stmt = $pdo->prepare("
             SELECT p.*, pr.numero_processo 
             FROM prazos p 
-            JOIN processos pr ON p.processo_id = pr.id 
+            LEFT JOIN processos pr ON p.processo_id = pr.id
             WHERE p.usuario_id = ? 
             ORDER BY p.concluido ASC, p.data_vencimento ASC
         "); $stmt->execute([$_SESSION["user_id"]]); $prazos = $stmt->fetchAll();

@@ -6,7 +6,7 @@ class DocumentoController {
         $stmt = $pdo->prepare("
             SELECT d.*, c.nome as cliente_nome, p.numero_processo 
             FROM documentos d 
-            JOIN clientes c ON d.cliente_id = c.id 
+            LEFT JOIN clientes c ON d.cliente_id = c.id
             LEFT JOIN processos p ON d.processo_id = p.id
             WHERE d.usuario_id = ?
             ORDER BY d.created_at DESC

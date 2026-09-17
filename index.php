@@ -4,15 +4,9 @@ session_start();
 require_once 'config.php';
 
 $request = $_SERVER['REQUEST_URI'];
-\$basePath = getenv('BASE_PATH') !== false ? getenv('BASE_PATH') : (isset(<?php
-// index.php
-session_start();
-require_once 'config.php';
-
-$request = $_SERVER['REQUEST_URI'];
-$basePath = getenv('BASE_PATH') !== false ? getenv('BASE_PATH') : '/Gestaoadvocacia'; // Nome da sua pasta no WAMP
+$isRender = isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'onrender.com') !== false;
+$basePath = $isRender ? '' : '/Gestaoadvocacia';
 $path = parse_url($request, PHP_URL_PATH);
-// Remove o nome da pasta da rota para o sistema entender
 
 if (strpos($path, $basePath) === 0) {
     $path = substr($path, strlen($basePath));

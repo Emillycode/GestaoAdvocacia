@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // index.php
 session_start();
 require_once 'config.php';
@@ -13,12 +13,10 @@ if (strpos($path, $basePath) === 0) {
 }
 if ($path == '') $path = '/';
 
-// Para testes locais com PHP Built-in server
 if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js|pdf)$/', $path)) {
     return false;
 }
 
-// Rotas públicas
 if (!isLoggedIn() && $path !== '/login' && $path !== '/login/2fa') {
     redirect('/login');
 }
@@ -56,7 +54,6 @@ switch ($path) {
         redirect('/login');
         break;
         
-    // Rotas de Clientes
     case '/clientes':
         require 'app/controllers/ClienteController.php';
         (new ClienteController())->index();
@@ -76,7 +73,6 @@ switch ($path) {
         else (new ClienteController())->create();
         break;
         
-    // Rotas de Processos
     case '/processos':
         require 'app/controllers/ProcessoController.php';
         (new ProcessoController())->index();
@@ -96,7 +92,6 @@ switch ($path) {
         (new ProcessoController())->delete($matches[1]);
         break;
         
-    // Rotas de Prazos
     case '/prazos':
         require 'app/controllers/PrazoController.php';
         (new PrazoController())->index();
@@ -120,7 +115,6 @@ switch ($path) {
         (new PrazoController())->concluir($matches[1]);
         break;
         
-    // Rotas do Financeiro
     case '/financeiro':
         require 'app/controllers/FinanceiroController.php';
         (new FinanceiroController())->index();
@@ -131,7 +125,6 @@ switch ($path) {
         else (new FinanceiroController())->create();
         break;
         
-    // Rotas de Documentos
     case '/documentos':
         require 'app/controllers/DocumentoController.php';
         (new DocumentoController())->index();

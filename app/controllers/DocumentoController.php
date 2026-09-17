@@ -3,13 +3,14 @@ class DocumentoController {
     public function index() {
         $pdo = getDB();
         
-        $stmt = $pdo->query("
+        $stmt = $pdo->prepare("
             SELECT d.*, c.nome as cliente_nome, p.numero_processo 
             FROM documentos d 
             JOIN clientes c ON d.cliente_id = c.id 
             LEFT JOIN processos p ON d.processo_id = p.id
+            WHERE d.usuario_id = ?
             ORDER BY d.created_at DESC
-        ");
+        "); $stmt->execute([$_SESSION["user_id"]]);
         $documentos = $stmt->fetchAll();
         
         $content = 'app/views/documentos/index.php';
@@ -18,8 +19,8 @@ class DocumentoController {
 
     public function create() {
         $pdo = getDB();
-        $clientes = $pdo->query("SELECT id, nome FROM clientes ORDER BY nome ASC")->fetchAll();
-        $processos = $pdo->query("SELECT id, numero_processo FROM processos ORDER BY numero_processo ASC")->fetchAll();
+        $stmt_c = $pdo->prepare("SELECT id, nome FROM clientes WHERE usuario_id = ? ORDER BY nome ASC"); $stmt_c->execute([$_SESSION["user_id"]]); $clientes = $stmt_c->fetchAll();
+        $stmt_p = $pdo->prepare("SELECT id, numero_processo FROM processos WHERE usuario_id = ? ORDER BY numero_processo ASC"); $stmt_p->execute([$_SESSION["user_id"]]); $processos = $stmt_p->fetchAll();
         
         $content = 'app/views/documentos/form.php';
         require 'app/views/layout.php';
@@ -44,8 +45,8 @@ class DocumentoController {
         
         if (move_uploaded_file($arquivo['tmp_name'], __DIR__ . '/../../' . $caminho)) {
             $pdo = getDB();
-            $stmt = $pdo->prepare("INSERT INTO documentos (cliente_id, processo_id, nome_arquivo, caminho_arquivo, tipo_documento) VALUES (?, ?, ?, ?, ?)");
-            $stmt->execute([$cliente_id, $processo_id, $nome_original, $caminho, $tipo_documento]);
+            $stmt = $pdo->prepare("INSERT INTO documentos (cliente_id, processo_id, nome_arquivo, caminho_arquivo, tipo_documento, usuario_id) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$cliente_id, $processo_id, $nome_original, $caminho, $tipo_documento, $_SESSION["user_id"]]);
             
             $_SESSION['flash_msg'] = "Documento salvo com sucesso!";
             redirect('/documentos');

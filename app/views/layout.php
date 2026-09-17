@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão Advogados- Painel</title>
+    <title>Gestão Advogados - Painel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -15,6 +15,8 @@
         .content { padding: 20px; }
         .navbar-top { background-color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px 20px; margin-bottom: 20px; border-radius: 8px; }
     </style>
+
+    <link rel="shortcut icon" type="image/jpeg" href="<?= BASE_URL ?>/favicon.jpg?v=1789605784">
 </head>
 <body>
 
@@ -43,6 +45,13 @@
             <?php if (isset($_SESSION['flash_msg'])): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <?= htmlspecialchars($_SESSION['flash_msg']) ?>
+                    <?php if(isset($_SESSION['whatsapp_url'])): ?>
+                        <br><br>
+                        <a href="<?= $_SESSION['whatsapp_url'] ?>" target="_blank" class="btn btn-success">
+                            <i class="bi bi-whatsapp"></i> Enviar Mensagem no WhatsApp
+                        </a>
+                        <?php unset($_SESSION['whatsapp_url']); ?>
+                    <?php endif; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     <?php unset($_SESSION['flash_msg']); ?>
                 </div>
@@ -56,6 +65,7 @@
             <?php endif; ?>
 
             <?php if (isset($content)) require $content; ?>
+
         </div>
     </div>
 </div>
@@ -63,4 +73,3 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

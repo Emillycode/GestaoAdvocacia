@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang='pt-br'>
+<head>
+    <meta charset='UTF-8'>
+    <title>Documentação Completa - Gestão Advogados</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; line-height: 1.6; margin: 0; padding: 0; background-color: #f9f9f9; }
+        .container { max-width: 800px; margin: 40px auto; background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: #2c3e50; }
+        h1 { border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-bottom: 30px; }
+        h2 { margin-top: 40px; border-bottom: 1px solid #ecf0f1; padding-bottom: 5px; }
+        p, li { font-size: 16px; }
+        code { background-color: #f1f2f6; padding: 2px 5px; border-radius: 4px; font-family: monospace; color: #e74c3c; }
+        pre { background: #2f3640; color: #f5f6fa; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .footer { margin-top: 50px; text-align: center; font-size: 12px; color: #7f8c8d; }
+        .btn-print { display: inline-block; padding: 10px 20px; background: #3498db; color: #fff; text-decoration: none; border-radius: 5px; margin-bottom: 20px; cursor: pointer; border: none; font-size: 16px; }
+        @media print {
+            body { background: #fff; }
+            .container { box-shadow: none; margin: 0; padding: 20px; max-width: 100%; }
+            .btn-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <button class='btn-print' onclick='window.print()'>Salvar como PDF</button>
+
+        <h1>Gestão Advogados - Documentação Completa</h1>
+        <p><strong>Versão:</strong> 1.0.0<br><strong>Data de Atualização:</strong> Setembro de 2026</p>
+
+        <h2>1. Visão Geral da Arquitetura</h2>
+        <p>O sistema "Gestão Advogados" foi projetado utilizando a arquitetura <strong>MVC (Model-View-Controller)</strong> em <strong>PHP puro</strong>. Ele utiliza o <strong>SQLite</strong> como banco de dados principal pela sua facilidade de portabilidade (dispensa configuração de servidores MySQL).</p>
+        <p>A arquitetura se divide da seguinte forma:</p>
+        <ul>
+            <li><code>/app/controllers/</code>: Contém a lógica de negócio (CRUDs, autenticação).</li>
+            <li><code>/app/views/</code>: Contém as interfaces (HTML, Bootstrap 5).</li>
+            <li><code>/db/</code>: Armazena o banco de dados <code>database.sqlite</code>.</li>
+            <li><code>/public/</code>: Arquivos públicos como imagens (favicon) e uploads de documentos.</li>
+            <li><code>index.php</code>: Atua como <strong>Front Controller</strong>, roteando todas as requisições do sistema.</li>
+            <li><code>config.php</code>: Arquivo central de configurações e conexão PDO.</li>
+        </ul>
+
+        <h2>2. Isolamento de Contas (Multi-Tenant)</h2>
+        <p>O sistema foi atualizado para uma arquitetura <strong>Multi-Tenant</strong>. Isso significa que todos os dados gravados no banco de dados estão atrelados ao <code>usuario_id</code> (identificação do e-mail que fez o login). Um advogado logado como <em>A</em> não tem acesso aos processos, clientes ou documentos do advogado <em>B</em>.</p>
+        <p><strong>Regra de implementação futura:</strong> Qualquer nova tabela ou funcionalidade que guarde dados sensíveis deve possuir uma coluna <code>usuario_id</code>, e as queries SQL (SELECT, UPDATE, DELETE) devem obrigatoriamente validar essa coluna via parâmetro na sessão (<code>\['user_id']</code>).</p>
+
+        <h2>3. Autenticação e Segurança (2FA)</h2>
+        <p>A segurança é reforçada por uma verificação de duas etapas:</p>
+        <ul>
+            <li><strong>Senha Mestre:</strong> Validada primeiro no controlador <code>AuthController</code> (ex: <code>Adm@2026</code>).</li>
+            <li><strong>Envio SMTP:</strong> Após a senha mestre ser digitada, um código de 6 dígitos é gerado aleatoriamente e enviado ao e-mail informado no input.</li>
+            <li><strong>Sessão:</strong> O usuário só é considerado <code>isLoggedIn() === true</code> após confirmar o código, ganhando um <code>\['user_id']</code> gerado a partir do seu e-mail.</li>
+        </ul>
+
+        <h2>4. Estrutura de Banco de Dados</h2>
+        <p>O sistema utiliza as seguintes tabelas no arquivo <code>database.sqlite</code>:</p>
+        <ul>
+            <li><strong>usuarios</strong>: Armazena o e-mail, id único e os códigos temporários do 2FA.</li>
+            <li><strong>clientes</strong>: Cadastro base (Nome, e-mail, telefone, CPF).</li>
+            <li><strong>processos</strong>: Detalhes processuais (Número, Tribunal, Vara, andamento e status). Relacionado à tabela clientes.</li>
+            <li><strong>prazos</strong>: Agenda de compromissos e audiências.</li>
+            <li><strong>financeiro</strong>: Controle de despesas e receitas.</li>
+            <li><strong>documentos</strong>: Armazenamento do caminho lógico dos arquivos upados.</li>
+        </ul>
+
+        <h2>5. Integração com WhatsApp (API Externa)</h2>
+        <p>Ao editar o <strong>Andamento Resumido</strong> de um processo na aba Processos, o <code>ProcessoController.php</code> monta automaticamente uma URL de redirecionamento do <code>wa.me</code> (WhatsApp Web/App) contendo uma mensagem pré-formatada com o nome do cliente, número do processo e o andamento digitado.</p>
+
+        <h2>6. Como realizar atualizações futuras</h2>
+        <p>Se um novo desenvolvedor for adicionar recursos, siga estas diretrizes:</p>
+        <ol>
+            <li><strong>Criar a Rota:</strong> Adicione a nova URL no <code>switch(\)</code> do <code>index.php</code>.</li>
+            <li><strong>Criar o Controller:</strong> Adicione um arquivo <code>NomeController.php</code> em <code>/app/controllers/</code>.</li>
+            <li><strong>Sempre Validar Usuário:</strong> Todas as queries devem incluir <code>WHERE usuario_id = ?</code>, usando a variável global de sessão.</li>
+            <li><strong>Uploads:</strong> Arquivos upados devem ser isolados; caso adicione um módulo de upload, grave o nome criptografado para evitar colisões no disco.</li>
+        </ol>
+
+        <div class='footer'>
+            Gerado automaticamente - Sistema Gestão Advogados
+        </div>
+    </div>
+</body>
+</html>

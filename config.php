@@ -1,12 +1,12 @@
 <?php
 // config.php
 define('DB_FILE', __DIR__ . '/db/database.sqlite');
-define('BASE_URL', 'http://localhost/escritorio-advocacia'); // Ajuste conforme necessário
+define('BASE_URL', 'http://localhost/Gestaoadvocacia'); // Ajuste conforme necessÃ¡rio
 
 function getDB() {
     static $pdo = null;
     if ($pdo === null) {
-        // Se o banco não existir, tentamos rodar o setup (apenas uma vez para facilitar o uso do usuário)
+        // Se o banco nÃ£o existir, tentamos rodar o setup (apenas uma vez para facilitar o uso do usuÃ¡rio)
         $isNew = !file_exists(DB_FILE);
         $pdo = new PDO('sqlite:' . DB_FILE);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

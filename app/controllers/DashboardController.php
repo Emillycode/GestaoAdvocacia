@@ -6,12 +6,12 @@ class DashboardController {
         $pdo = getDB();
         
         // Obter estatísticas rápidas
-        $clientesCount = $pdo->query("SELECT COUNT(*) FROM clientes")->fetchColumn();
-        $processosCount = $pdo->query("SELECT COUNT(*) FROM processos")->fetchColumn();
+        $stmt_cli = $pdo->prepare("SELECT COUNT(*) FROM clientes WHERE usuario_id = ?"); $stmt_cli->execute([$_SESSION["user_id"]]); $clientesCount = $stmt_cli->fetchColumn();
+        $stmt_proc = $pdo->prepare("SELECT COUNT(*) FROM processos WHERE usuario_id = ?"); $stmt_proc->execute([$_SESSION["user_id"]]); $processosCount = $stmt_proc->fetchColumn();
         
         // Prazos para os próximos 7 dias
-        $stmt = $pdo->prepare("SELECT * FROM prazos WHERE concluido = 0 AND data_vencimento BETWEEN date('now') AND date('now', '+7 days') ORDER BY data_vencimento ASC");
-        $stmt->execute();
+        $stmt = $pdo->prepare("SELECT * FROM prazos WHERE concluido = 0 AND usuario_id = ? AND data_vencimento BETWEEN date('now') AND date('now', '+7 days') ORDER BY data_vencimento ASC");
+        $stmt->execute([$_SESSION["user_id"]]);
         $prazosProximos = $stmt->fetchAll();
         
         $content = 'app/views/dashboard.php';

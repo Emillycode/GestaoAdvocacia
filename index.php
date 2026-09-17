@@ -4,7 +4,7 @@ session_start();
 require_once 'config.php';
 
 $request = $_SERVER['REQUEST_URI'];
-$basePath = '/escritorio-advocacia'; // Nome da sua pasta no WAMP
+$basePath = '/Gestaoadvocacia'; // Nome da sua pasta no WAMP
 $path = parse_url($request, PHP_URL_PATH);
 // Remove o nome da pasta da rota para o sistema entender
 
@@ -15,10 +15,10 @@ if ($path == '') $path = '/';
 
 // Para testes locais com PHP Built-in server
 if (preg_match('/\.(?:png|jpg|jpeg|gif|css|js|pdf)$/', $path)) {
-    return false; // serve o arquivo requisitado como está
+    return false; // serve o arquivo requisitado como estÃƒÂ¡tico
 }
 
-// Rotas públicas
+// Rotas pÃƒÂºblicas
 if (!isLoggedIn() && $path !== '/login' && $path !== '/login/2fa') {
     redirect('/login');
 }
@@ -61,6 +61,15 @@ switch ($path) {
         require 'app/controllers/ClienteController.php';
         (new ClienteController())->index();
         break;
+    case (preg_match('/^\/clientes\/editar\/(\d+)$/', $path, $matches) ? true : false):
+        require 'app/controllers/ClienteController.php';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') (new ClienteController())->update($matches[1]);
+        else (new ClienteController())->edit($matches[1]);
+        break;
+    case (preg_match('/^\/clientes\/excluir\/(\d+)$/', $path, $matches) ? true : false):
+        require 'app/controllers/ClienteController.php';
+        (new ClienteController())->delete($matches[1]);
+        break;
     case '/clientes/novo':
         require 'app/controllers/ClienteController.php';
         if ($_SERVER['REQUEST_METHOD'] === 'POST') (new ClienteController())->store();
@@ -82,11 +91,24 @@ switch ($path) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') (new ProcessoController())->update($matches[1]);
         else (new ProcessoController())->edit($matches[1]);
         break;
+    case (preg_match('/^\/processos\/excluir\/(\d+)$/', $path, $matches) ? true : false):
+        require 'app/controllers/ProcessoController.php';
+        (new ProcessoController())->delete($matches[1]);
+        break;
         
     // Rotas de Prazos
     case '/prazos':
         require 'app/controllers/PrazoController.php';
         (new PrazoController())->index();
+        break;
+    case (preg_match('/^\/prazos\/editar\/(\d+)$/', $path, $matches) ? true : false):
+        require 'app/controllers/PrazoController.php';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') (new PrazoController())->update($matches[1]);
+        else (new PrazoController())->edit($matches[1]);
+        break;
+    case (preg_match('/^\/prazos\/excluir\/(\d+)$/', $path, $matches) ? true : false):
+        require 'app/controllers/PrazoController.php';
+        (new PrazoController())->delete($matches[1]);
         break;
     case '/prazos/novo':
         require 'app/controllers/PrazoController.php';
@@ -122,6 +144,7 @@ switch ($path) {
         
     default:
         http_response_code(404);
-        echo "404 - Página não encontrada.";
+        echo "404 - PÃƒÂ¡gina nÃƒÂ£o encontrada.";
         break;
 }
+

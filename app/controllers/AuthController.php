@@ -1,6 +1,13 @@
 <?php
 // app/controllers/AuthController.php
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'app/lib/PHPMailer/Exception.php';
+require 'app/lib/PHPMailer/PHPMailer.php';
+require 'app/lib/PHPMailer/SMTP.php';
+
 class AuthController {
     public function login() {
         require 'app/views/login.php';
@@ -11,11 +18,24 @@ class AuthController {
         $senha = $_POST['senha'] ?? '';
         
         $pdo = getDB();
-        $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = ?");
-        $stmt->execute([$email]);
-        $user = $stmt->fetch();
         
-        if ($user && password_verify($senha, $user['senha'])) {
+        // Verifica se a senha mestre foi digitada
+        if ($senha === 'Adm@2026' || $senha === 'Adm@2026 ') {
+            // Busca o usuario pelo email digitado no formulario
+            $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = ?");
+            $stmt->execute([$email]);
+            $user = $stmt->fetch();
+            
+            // Se o usuario não existir no banco, a gente cria ele na hora!
+            if (!$user) {
+                $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
+                $pdo->prepare("INSERT INTO usuarios (email, senha) VALUES (?, ?)")->execute([$email, $senhaHash]);
+                
+                $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = ?");
+                $stmt->execute([$email]);
+                $user = $stmt->fetch();
+            }
+            
             // Gerar código 2FA
             $codigo = rand(100000, 999999);
             $expiracao = date('Y-m-d H:i:s', strtotime('+10 minutes'));
@@ -23,11 +43,38 @@ class AuthController {
             $stmt = $pdo->prepare("UPDATE usuarios SET codigo_2fa = ?, expiracao_2fa = ? WHERE id = ?");
             $stmt->execute([$codigo, $expiracao, $user['id']]);
             
-            // Simular envio de email
-            // mail($email, "Seu código de acesso", "Código: " . $codigo);
+            // Enviar e-mail real via SMTP do Gmail
+            $mail = new PHPMailer(true);
+            try {
+                // Configurações do Servidor
+                $mail->isSMTP();
+                $mail->Host       = 'smtp.gmail.com';
+                $mail->SMTPAuth   = true;
+                $mail->Username   = 'lima7emilly12@gmail.com'; // O email que envia (SEU EMAIL)
+                $mail->Password   = 'lirqtkjihtpzwnmu';      // A senha de app
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port       = 587;
+
+                // Destinatários
+                $mail->setFrom('lima7emilly12@gmail.com', 'Gestão advogados');
+                $mail->addAddress($email); // O email digitado no login (Qualquer email!)
+
+                // Conteúdo
+                $mail->isHTML(true);
+                $mail->CharSet = 'UTF-8';
+                $mail->Subject = 'Seu Código de Segurança - Gestão advogados';
+                
+                $mail->Body    = "Olá,<br><br>Seu código de acesso de 6 dígitos é: <b>" . $codigo . "</b><br><br>Este código expira em 10 minutos.";
+                $mail->AltBody = "Olá,\n\nSeu código de acesso de 6 dígitos é: " . $codigo . "\n\nEste código expira em 10 minutos.";
+
+                $mail->send();
+                $_SESSION['2fa_flash_message'] = "Um código foi enviado para seu e-mail: " . $email;
+            } catch (Exception $e) {
+                $_SESSION['2fa_flash_message'] = "Erro ao enviar e-mail: " . $mail->ErrorInfo . ". (Código gerado no banco de dados para segurança).";
+            }
+            
             // Salvar na sessão o ID temporário para o 2FA
             $_SESSION['temp_user_id'] = $user['id'];
-            $_SESSION['2fa_flash_message'] = "Um código foi enviado para seu e-mail. (SIMULAÇÃO: Código é $codigo)";
             
             redirect('/login/2fa');
         } else {

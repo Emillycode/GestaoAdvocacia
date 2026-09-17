@@ -32,7 +32,8 @@
                             <?php endif; ?>
                         </td>
                         <td>
-                            <a href="<?= BASE_URL ?>/processos/editar/<?= $processo['id'] ?>" class="btn btn-sm btn-outline-primary">Andamento</a>
+                            <a href="<?= BASE_URL ?>/processos/editar/<?= $processo['id'] ?>" class="btn btn-sm btn-outline-primary" title="Editar Andamento"><i class="bi bi-pencil"></i> Andamento</a>
+                            <a href="<?= BASE_URL ?>/processos/excluir/<?= $processo['id'] ?>" class="btn btn-sm btn-outline-danger" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este processo?');"><i class="bi bi-trash"></i></a>
                         </td>
                     </tr>
                     <?php endforeach; ?>

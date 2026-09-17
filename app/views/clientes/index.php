@@ -14,16 +14,26 @@
                         <th>Telefone (WhatsApp)</th>
                         <th>E-mail</th>
                         <th>CPF/CNPJ</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach($clientes as $cliente): ?>
                     <tr>
                         <td><?= $cliente['id'] ?></td>
-                        <td><strong><?= htmlspecialchars($cliente['nome']) ?></strong></td>
+                        <td>
+                            <strong><?= htmlspecialchars($cliente['nome']) ?></strong>
+                            <?php if(!empty($cliente['observacao'])): ?>
+                                <br><small class="text-muted"><i class="bi bi-info-circle"></i> <?= htmlspecialchars(mb_strimwidth($cliente['observacao'], 0, 50, '...')) ?></small>
+                            <?php endif; ?>
+                        </td>
                         <td><?= htmlspecialchars($cliente['telefone']) ?></td>
                         <td><?= htmlspecialchars($cliente['email']) ?></td>
                         <td><?= htmlspecialchars($cliente['cpf_cnpj']) ?></td>
+                        <td>
+                            <a href="<?= BASE_URL ?>/clientes/editar/<?= $cliente['id'] ?>" class="btn btn-sm btn-outline-primary" title="Editar"><i class="bi bi-pencil"></i></a>
+                            <a href="<?= BASE_URL ?>/clientes/excluir/<?= $cliente['id'] ?>" class="btn btn-sm btn-outline-danger" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este cliente?');"><i class="bi bi-trash"></i></a>
+                        </td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
